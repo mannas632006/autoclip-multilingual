@@ -20,7 +20,7 @@
 
 **[Скачать приложение](https://github.com/zhouxiaoka/autoclip/releases/latest)** · [Быстрый старт](#quick-start) · [Сайт](https://zhouxiaoka.github.io/autoclip_intro/) · [Документация](#documentation) · [Сообщить об ошибке](https://github.com/zhouxiaoka/autoclip/issues/new/choose)
 
-[简体中文](README.md) · [English](README-EN.md) · [日本語](README-JA.md) · [한국어](README-KO.md) · [Español](README-ES.md) · [Português](README-PT.md) · **Русский** · [Français](README-FR.md)
+[简体中文](README-ZH.md) · [English](README-EN.md) · [日本語](README-JA.md) · [한국어](README-KO.md) · [Español](README-ES.md) · [Português](README-PT.md) · **Русский** · [Français](README-FR.md)
 
 </div>
 

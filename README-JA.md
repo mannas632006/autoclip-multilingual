@@ -20,7 +20,7 @@
 
 **[デスクトップ版を入手](https://github.com/zhouxiaoka/autoclip/releases/latest)** · [クイックスタート](#quick-start) · [公式サイト](https://zhouxiaoka.github.io/autoclip_intro/) · [ドキュメント](#documentation) · [問題を報告](https://github.com/zhouxiaoka/autoclip/issues/new/choose)
 
-[简体中文](README.md) · [English](README-EN.md) · **日本語** · [한국어](README-KO.md) · [Español](README-ES.md) · [Português](README-PT.md) · [Русский](README-RU.md) · [Français](README-FR.md)
+[简体中文](README-ZH.md) · [English](README-EN.md) · **日本語** · [한국어](README-KO.md) · [Español](README-ES.md) · [Português](README-PT.md) · [Русский](README-RU.md) · [Français](README-FR.md)
 
 </div>
 

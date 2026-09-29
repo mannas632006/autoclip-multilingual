@@ -20,7 +20,7 @@ Transforme vídeos longos em momentos que merecem ser compartilhados.
 
 **[Baixar aplicativo](https://github.com/zhouxiaoka/autoclip/releases/latest)** · [Início rápido](#quick-start) · [Site](https://zhouxiaoka.github.io/autoclip_intro/) · [Documentação](#documentation) · [Relatar problema](https://github.com/zhouxiaoka/autoclip/issues/new/choose)
 
-[简体中文](README.md) · [English](README-EN.md) · [日本語](README-JA.md) · [한국어](README-KO.md) · [Español](README-ES.md) · **Português** · [Русский](README-RU.md) · [Français](README-FR.md)
+[简体中文](README-ZH.md) · [English](README-EN.md) · [日本語](README-JA.md) · [한국어](README-KO.md) · [Español](README-ES.md) · **Português** · [Русский](README-RU.md) · [Français](README-FR.md)
 
 </div>
 
