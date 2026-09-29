@@ -26,6 +26,8 @@ Turn long videos into moments worth sharing.
 
 AutoClip uses AI to analyze video transcripts, find highlights, write titles, and create clips and collections. Built for interviews, podcasts, courses, and livestream recordings, it offers a desktop app, a Docker web interface, and CLI / MCP access.
 
+> **English videos:** this fork detects English transcripts automatically and uses English AI instructions, so titles, recommendations and collections come back in English, with or without subtitles. Chinese videos work exactly as before. See [English videos](docs/ENGLISH_CONTENT.md).
+
 ## See the interface
 
 ![Video import and project management](docs/images/home-v1.4.0.png)
@@ -223,6 +225,8 @@ autoclip doctor --provider ollama
 autoclip run talk.mp4 --provider ollama --json
 ```
 
+On Windows, install a compatible audio library right after `faster-whisper`, or transcription fails with `metadata_errors`: `python -m pip install "av<15" --only-binary=:all:`. For videos longer than about 20 minutes, transcribe first with `python scripts/transcribe_long.py video.mp4` and pass the result with `--srt`. See [English videos](docs/ENGLISH_CONTENT.md).
+
 Replace `PROJECT_ID` with the project ID returned by processing to export for Shorts. Start the stdio MCP server with `autoclip mcp`:
 
 ```bash
@@ -294,6 +298,7 @@ See the [first-clip guide](docs/USER_INSTALLATION_GUIDE.en.md) for sample prepar
 | Guide | Link |
 | --- | --- |
 | Getting started | [Installation](docs/USER_INSTALLATION_GUIDE.en.md) |
+| English videos | [English videos, Windows setup and long videos](docs/ENGLISH_CONTENT.md) |
 | Hosting and automation | [Docker](docs/DOCKER.en.md) · [CLI / MCP (Chinese)](docs/CLI_AND_MCP.md) · [Agent skill (Chinese)](skills/autoclip/SKILL.md) |
 | Models and troubleshooting | [Model configuration (Chinese)](docs/MULTI_LLM_PROVIDER_GUIDE.md) · [Troubleshooting](docs/FAQ.en.md) |
 | Versions and privacy | [Changelog](CHANGELOG.md) · [Privacy](docs/PRIVACY.en.md) |
