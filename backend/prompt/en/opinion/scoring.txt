@@ -78,23 +78,22 @@ You will receive a JSON array of topic objects to evaluate. Each object contains
 ```
 
 ## Output format
-Follow the structure of the input array exactly: add the `final_score` (a float from 0.0 to 1.0) and `recommend_reason` (a string) fields to each topic object, keep every other field unchanged, and return the complete JSON array in the same order.
+Return a JSON array with **one object per input topic, in the same order as the input**. Each object has exactly three fields:
+- `outline`: the topic's `outline`, copied exactly
+- `final_score`: a float from 0.0 to 1.0
+- `recommend_reason`: a string
+
+Do **not** repeat `content`, `start_time`, `end_time` or `transcript` in your reply. Never return a topic without `final_score` and `recommend_reason`.
 
 ```json
 [
   {
     "outline": "How young people are rebuilding their values",
-    "content": ["From material goals to meaning", "Balancing self and society", "Blending tradition and modernity"],
-    "start_time": "00:03:10,000",
-    "end_time": "00:09:05,000",
     "final_score": 0.83,
     "recommend_reason": "An in-depth look at how young people are rethinking their values, from chasing things to chasing meaning, and how they balance self with society."
   },
   {
     "outline": "A critique of the online filter bubble",
-    "content": ["The influence of recommendation algorithms", "Why diverse views matter", "The need for rational thinking"],
-    "start_time": "00:09:06,000",
-    "end_time": "00:15:40,000",
     "final_score": 0.79,
     "recommend_reason": "A clear-headed critique of how algorithms narrow our thinking, and a strong case for seeking out diverse views and thinking for yourself."
   }

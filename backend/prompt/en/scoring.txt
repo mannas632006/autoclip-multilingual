@@ -37,24 +37,23 @@ You will receive a JSON array of topic objects to evaluate. Each object contains
 ---
 
 ## Output format
-Follow the structure of the input array exactly: add the `final_score` and `recommend_reason` fields to each topic object and return the complete JSON array.
+Return a JSON array with **one object per input topic, in the same order as the input**. Each object has exactly three fields:
+- `outline`: the topic's `outline`, copied exactly
+- `final_score`: a float from 0.0 to 1.0
+- `recommend_reason`: a string
+
+Do **not** repeat `content`, `start_time`, `end_time` or `transcript` in your reply. Never return a topic without `final_score` and `recommend_reason`.
 
 ### Example output
 ```json
 [
   {
     "outline": "How to trade tech stocks",
-    "content": ["Compute infrastructure is the core", "AI infrastructure deserves attention", "Don't chase highs"],
-    "start_time": "01:10:25,500",
-    "end_time": "01:12:30,800",
     "final_score": 0.92,
     "recommend_reason": "Sharp and packed with information, it nails the core logic behind investing in tech stocks right now."
   },
   {
     "outline": "Investment opportunities in consumer stocks",
-    "content": ["Watch the rise of local brands", "Young people's spending habits are changing"],
-    "start_time": "01:13:05,100",
-    "end_time": "01:14:15,600",
     "final_score": 0.78,
     "recommend_reason": "A fresh angle on how young consumers are changing, with plenty of room for debate."
   }

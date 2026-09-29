@@ -78,23 +78,22 @@ You will receive a JSON array of topic objects to evaluate. Each object contains
 ```
 
 ## Output format
-Follow the structure of the input array exactly: add the `final_score` (a float from 0.0 to 1.0) and `recommend_reason` (a string) fields to each topic object, keep every other field unchanged, and return the complete JSON array in the same order.
+Return a JSON array with **one object per input topic, in the same order as the input**. Each object has exactly three fields:
+- `outline`: the topic's `outline`, copied exactly
+- `final_score`: a float from 0.0 to 1.0
+- `recommend_reason`: a string
+
+Do **not** repeat `content`, `start_time`, `end_time` or `transcript` in your reply. Never return a topic without `final_score` and `recommend_reason`.
 
 ```json
 [
   {
     "outline": "Tech stock investment strategy",
-    "content": ["AI compute is the core sector", "Watch infrastructure companies", "Avoid chasing high valuations"],
-    "start_time": "00:10:25,500",
-    "end_time": "00:15:30,800",
     "final_score": 0.88,
     "recommend_reason": "An in-depth look at the logic of tech investing today, tied to AI compute trends, with concrete stock-picking ideas and risk controls that give investors real guidance."
   },
   {
     "outline": "Business models of new consumer brands",
-    "content": ["Advantages of the DTC model", "Supply-chain integration", "Brand differentiation"],
-    "start_time": "00:16:05,100",
-    "end_time": "00:21:15,600",
     "final_score": 0.76,
     "recommend_reason": "A full breakdown of how new consumer brands win, from DTC to supply-chain integration, with practical lessons for founders and brand teams."
   }

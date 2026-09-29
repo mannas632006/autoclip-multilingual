@@ -83,23 +83,22 @@ You will receive a JSON array of topic objects to evaluate. Each object contains
 ```
 
 ## Output format
-Follow the structure of the input array exactly: add the `final_score` (a float from 0.0 to 1.0) and `recommend_reason` (a string) fields to each topic object, keep every other field unchanged, and return the complete JSON array in the same order.
+Return a JSON array with **one object per input topic, in the same order as the input**. Each object has exactly three fields:
+- `outline`: the topic's `outline`, copied exactly
+- `final_score`: a float from 0.0 to 1.0
+- `recommend_reason`: a string
+
+Do **not** repeat `content`, `start_time`, `end_time` or `transcript` in your reply. Never return a topic without `final_score` and `recommend_reason`.
 
 ```json
 [
   {
     "outline": "Hilarious moments from the game segment",
-    "content": ["A funny misunderstanding while the rules are explained", "The stars' adorable reactions to failing the challenge", "A surprise twist in who wins"],
-    "start_time": "00:05:23,450",
-    "end_time": "00:11:45,230",
     "final_score": 0.9,
     "recommend_reason": "A light, fun game that shows the stars' genuine, lovable side; pure fun and a chance to unwind."
   },
   {
     "outline": "The celebrity interview reveals",
-    "content": ["A heartwarming childhood story", "Funny stories from behind the scenes", "A touching moment with fans"],
-    "start_time": "00:15:33,000",
-    "end_time": "00:22:15,000",
     "final_score": 0.78,
     "recommend_reason": "Step into the stars' real lives as they share warm, funny stories that show their sincerity."
   }

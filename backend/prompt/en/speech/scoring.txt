@@ -69,15 +69,17 @@ You will receive a JSON array of topic objects to evaluate. Each object contains
 ```
 
 ## Output format
-Follow the structure of the input array exactly: add the `final_score` (a float from 0.0 to 1.0) and `recommend_reason` (a string) fields to each topic object, keep every other field unchanged, and return the complete JSON array in the same order.
+Return a JSON array with **one object per input topic, in the same order as the input**. Each object has exactly three fields:
+- `outline`: the topic's `outline`, copied exactly
+- `final_score`: a float from 0.0 to 1.0
+- `recommend_reason`: a string
+
+Do **not** repeat `content`, `start_time`, `end_time` or `transcript` in your reply. Never return a topic without `final_score` and `recommend_reason`.
 
 ```json
 [
   {
     "outline": "Three myths about success",
-    "content": ["Success does not mean earning more", "Success does not happen overnight", "Everyone defines success differently", "Audience interaction"],
-    "start_time": "00:00:30,000",
-    "end_time": "00:05:50,000",
     "final_score": 0.87,
     "recommend_reason": "A sharp, thought-provoking take on three common myths about success, told through real stories that make every point land. Ideal for young people feeling lost and anyone rethinking what success means."
   }

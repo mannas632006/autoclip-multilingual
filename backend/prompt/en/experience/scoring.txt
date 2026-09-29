@@ -69,15 +69,17 @@ You will receive a JSON array of topic objects to evaluate. Each object contains
 ```
 
 ## Output format
-Follow the structure of the input array exactly: add the `final_score` (a float from 0.0 to 1.0) and `recommend_reason` (a string) fields to each topic object, keep every other field unchanged, and return the complete JSON array in the same order.
+Return a JSON array with **one object per input topic, in the same order as the input**. Each object has exactly three fields:
+- `outline`: the topic's `outline`, copied exactly
+- `final_score`: a float from 0.0 to 1.0
+- `recommend_reason`: a string
+
+Do **not** repeat `content`, `start_time`, `end_time` or `transcript` in your reply. Never return a topic without `final_score` and `recommend_reason`.
 
 ```json
 [
   {
     "outline": "Effective study methods",
-    "content": ["Steps of the Pomodoro technique", "Applying the Feynman technique", "Building a memory palace"],
-    "start_time": "00:02:10,000",
-    "end_time": "00:07:45,000",
     "final_score": 0.84,
     "recommend_reason": "Three proven study methods with clear steps: Pomodoro for focus, Feynman for real understanding and a memory palace for recall. Easy for beginners, students and busy professionals alike."
   }

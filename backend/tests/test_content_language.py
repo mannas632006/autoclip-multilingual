@@ -301,3 +301,15 @@ def test_cover_split_title_keeps_words_whole():
     assert split_title("为什么大厂都在裁员，普通人该怎么办？") == ["为什么大厂都在裁员", "普通人该怎么办？"]
     lines = split_title("The real reason: Why battery storage is the bottleneck")
     assert lines == ["The real reason: Why battery", "storage is the bottleneck"]
+
+
+def test_english_scoring_prompts_ask_for_short_complete_replies():
+    """Echoing every input field back (incl. the transcript) made Gemini drop the scores: ask for 3 fields only."""
+    import json as _json
+    for cat in CATEGORIES:
+        text = lang.localize_prompt_path(get_prompt_files(cat)["recommendation"], "en").read_text(encoding="utf-8")
+        section = text.split("## Output format", 1)[1]
+        assert "Do **not** repeat" in section and "transcript" in section, cat
+        example = section.split("```json", 1)[1].split("```", 1)[0]
+        for item in _json.loads(example):
+            assert set(item) == {"outline", "final_score", "recommend_reason"}, cat
