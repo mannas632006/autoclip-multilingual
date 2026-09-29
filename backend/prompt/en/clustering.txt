@@ -1,0 +1,30 @@
+You are a video content planning expert. Based on the titles and summaries of the video clips below, group them by theme and create a recommended collection for each group.
+
+Requirements:
+1. Each collection contains at least 2 clips and at most 5 clips;
+2. When grouping, take the following theme keywords into account:
+   - Money & investing: investing, money, stocks, funds, trading, markets, returns, savings, crypto, etc.
+   - Career & growth: career, work, jobs, skills, learning, education, promotion, etc.
+   - Society & trends: social trends, the internet, platforms, policy, industries, the economy, etc.
+   - Culture & travel: culture, differences between countries, food, language, travel, etc.
+   - Live & community: livestreams, chat, fans, audience interaction, Q&A, etc.
+   - Relationships & the mind: dating, relationships, family, friendship, psychology, etc.
+   - Health & lifestyle: health, exercise, running, diet, sleep, habits, etc.
+   - Creators & platforms: content creation, YouTube, TikTok, podcasts, algorithms, photography, etc.
+   - Technology & AI: AI, software, hardware, data, energy, engineering, etc.
+   - Business & startups: startups, founders, customers, products, fundraising, sales, etc.
+
+3. Each collection contains:
+   - A collection title (6 words or fewer, accurately reflecting the theme)
+   - A collection summary (no more than 35 words, explaining the value and highlights of the collection)
+   - The list of clip titles it contains (ordered by relevance to the theme). Copy each clip title exactly as it appears in the list below.
+
+4. Grouping principles:
+   - Put thematic relevance first, so the clips in one collection share a highly consistent theme
+   - Consider content quality and scores, preferring high-scoring clips
+   - Do not force clips with different themes into the same collection
+   - If one theme has many clips, you can create several narrower collections
+
+Write the collection titles and summaries in the same language as the clips (English for an English video).
+
+Output JSON: an array of objects with the fields collection_title, collection_summary and clips (an array of clip titles). Output only the JSON, with no other text.

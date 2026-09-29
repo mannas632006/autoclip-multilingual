@@ -22,15 +22,16 @@ class TitleGenerator:
         self.llm_client = LLMClient()
         self.text_processor = TextProcessor()
         
-        # 加载提示词
-        prompt_files_to_use = prompt_files if prompt_files is not None else PROMPT_FILES
-        with open(prompt_files_to_use['title'], 'r', encoding='utf-8') as f:
-            self.title_prompt = f.read()
-        
         # 使用传入的metadata_dir或默认值
         if metadata_dir is None:
             metadata_dir = METADATA_DIR
         self.metadata_dir = metadata_dir
+
+        # 加载提示词（英文内容换用 prompt/en/ 下的同款提示词）
+        from .language import load_language, read_prompt
+        prompt_files_to_use = prompt_files if prompt_files is not None else PROMPT_FILES
+        self.language = load_language(self.metadata_dir)
+        self.title_prompt = read_prompt(prompt_files_to_use['title'], self.language)
         self.llm_raw_output_dir = self.metadata_dir / "step4_llm_raw_output"
     
     def generate_titles(self, high_score_clips: List[Dict]) -> List[Dict]:

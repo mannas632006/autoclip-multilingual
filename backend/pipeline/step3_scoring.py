@@ -44,10 +44,11 @@ class ClipScorer:
         self.text_processor = TextProcessor()
         self.metadata_dir = Path(metadata_dir) if metadata_dir else None
         
-        # 加载提示词
+        # 加载提示词（英文内容换用 prompt/en/ 下的同款提示词）
+        from .language import load_language, read_prompt
         prompt_files_to_use = prompt_files if prompt_files is not None else PROMPT_FILES
-        with open(prompt_files_to_use['recommendation'], 'r', encoding='utf-8') as f:
-            self.recommendation_prompt = f.read()
+        self.language = load_language(self.metadata_dir)
+        self.recommendation_prompt = read_prompt(prompt_files_to_use['recommendation'], self.language)
 
         from .quality import load_srt_chunks
         self._srt_entries = load_srt_chunks(self.metadata_dir) if self.metadata_dir else []
@@ -106,7 +107,9 @@ class ClipScorer:
             return ""
         from .quality import excerpt_between, to_seconds
         try:
-            return excerpt_between(self._srt_entries, to_seconds(clip["start_time"]), to_seconds(clip["end_time"]))
+            # 600 个汉字 ≈ 400 个英文单词 ≈ 2400 个英文字符：给评分的原文信息量保持一致
+            max_chars = 2400 if self.language == "en" else 600
+            return excerpt_between(self._srt_entries, to_seconds(clip["start_time"]), to_seconds(clip["end_time"]), max_chars=max_chars)
         except (KeyError, ValueError, TypeError):
             return ""
 

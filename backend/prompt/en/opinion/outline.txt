@@ -1,0 +1,119 @@
+# Opinion & Commentary Video Outline Extraction Prompt
+
+## Input format
+You will receive a JSON input:
+
+{
+  "text": "{a segment of the video transcript}"
+}
+
+- The `text` field is one segment of the video transcript;
+- The content has been checked and is broadly coherent;
+- Use only the input as your source of information. Do not add outside knowledge, common-sense inferences or logical filler.
+
+## Language
+Write every topic name and subtopic in the same language as the transcript (English for an English video). Do not translate.
+
+## Core task: depth of opinion and value for critical thinking
+Your task is to **fully cover** every important opinion and argument in the input text while staying **reasonably concise** and avoiding over-fragmentation. The goal is to extract **8–15 core topics**, each corresponding to **3–8 minutes** of video.
+
+## Topic extraction principles
+
+### 1. Value of the opinion first
+- **Originality first**: prioritize content with a distinctive perspective, fresh views or deep thinking
+- **Controversy**: focus on debatable views that are worth discussing and provoke thought
+- **Complete logic**: make sure each view contains a complete argument (claim – evidence – conclusion)
+
+### 2. Depth of thinking
+- **Multiple dimensions**: prioritize deep discussion with multi-angle analysis and pros and cons
+- **Critical thinking**: focus on content that shows critical, rational analysis
+- **Value judgements**: highlight views with a clear value position and criteria for judgement
+
+### 3. Social significance
+- **Relevance**: prioritize views related to current social phenomena and news
+- **Broad value**: focus on discussion with broad significance that resonates
+- **Inspiration**: highlight content that is thought-provoking and broadens thinking
+
+### 4. Complete expression
+- **Clear stance**: make sure each topic contains a clear position and attitude
+- **Well argued**: keep the argument complete, including facts, logic and emotion
+- **Clear conclusion**: make sure the view ends in a clear conclusion or judgement
+
+## Merging and splitting strategy
+
+### Merge (these should become one topic):
+- Different levels or angles on the same social phenomenon
+- Connected chains of argument
+- Different expressions of views within the same value system
+- Multi-dimensional analysis of the same issue
+
+### Split (these should become separate topics):
+- The position fundamentally changes
+- The discussion moves from one field to another
+- The argument shifts from rational analysis to emotional expression
+- The criteria for judgement clearly change
+
+## Output format
+
+Output strictly in the following format, with no other descriptive text:
+
+### Outline:
+1.  **[Top-level topic name]**
+    - [Subtopic 1: highlight what is distinctive and thought-provoking about the view]
+    - [Subtopic 2: highlight what is distinctive and thought-provoking about the view]
+    - …
+
+2.  **[Top-level topic name]**
+    - [Subtopic 1]
+    - …
+
+Formatting rules (the output is parsed by a program):
+- Each topic line starts with its number, a period, and the topic name wrapped in double asterisks: `1.  **Topic name**`
+- Each subtopic is on its own line starting with `- `
+- Do not use asterisks anywhere else in a topic line, and do not use numbered lines for subtopics
+
+## Output example
+
+### Outline:
+1.  **How young people are rebuilding their values**
+    - The shift from material goals to meaning and fulfilment
+    - Balancing individualism with responsibility to others
+    - Paths for blending tradition with modern ideas
+    - The conflict between social expectations and personal choice
+
+2.  **A critique of the online filter bubble**
+    - How recommendation algorithms shape the way we think
+    - The tension between information overload and deep thinking
+    - Why we need diverse views and how to get them
+    - Why rational judgement matters in an age of information overload
+
+3.  **Education, fairness and social mobility**
+    - The root causes of unequal access to education
+    - Does "education changes your destiny" still hold today?
+    - How broader definitions of success challenge traditional views of education
+    - Responses to growing social stratification
+
+## Special considerations for opinion content
+
+### 1. Controversial views:
+- Make sure controversial views are expressed completely and fairly
+- Include the arguments on different sides
+- Keep the original context and emotional tone of the view
+
+### 2. Value judgements:
+- Clearly separate statements of fact from judgements of value
+- Keep clear statements of value positions
+- Include the basis and criteria for the judgement
+
+### 3. Social criticism:
+- Keep the criticism constructive and rational
+- Include both the analysis of the problem and ideas for solving it
+- Avoid pure venting or pointless complaining
+
+## Notes
+
+1. **Complete views**: make sure the extracted topics fully reflect the core position of the original views
+2. **Thought-provoking**: prioritize content that invites deep thinking
+3. **Social significance**: focus on views with distinctive insight into social phenomena
+4. **Clear logic**: make sure the chain of reasoning is complete and the argument clear
+5. **Neutrality**: stay neutral while extracting and do not judge the views yourself

@@ -34,8 +34,10 @@ class OutlineExtractor:
             prompt_files = PROMPT_FILES
         
         # 加载提示词
-        with open(prompt_files['outline'], 'r', encoding='utf-8') as f:
+        self.outline_prompt_path = prompt_files['outline']
+        with open(self.outline_prompt_path, 'r', encoding='utf-8') as f:
             self.outline_prompt = f.read()
+        self.language = "zh"
             
         # 创建用于存放中间文本块的目录
         self.chunks_dir = self.metadata_dir / "step1_chunks"
@@ -66,11 +68,20 @@ class OutlineExtractor:
             logger.warning("SRT文件为空或解析失败")
             raise PipelineFailure("SUBTITLE", "字幕文件为空，没有可分析的文本。", HINT_SUBTITLE)
             
+        # 1.4 内容语言：英文等拉丁字母字幕换用 prompt/en/ 下的同款提示词；写盘给 step2–5 复用
+        from .language import decide_language, save_language, read_prompt, EN
+        lang_info = decide_language(srt_data)
+        save_language(lang_info, self.metadata_dir)
+        self.language = lang_info["language"]
+        logger.info(f"内容语言: {self.language}（{lang_info['source']}，CJK {lang_info['cjk']} / Latin {lang_info['latin']}）")
+        if self.language == EN:
+            self.outline_prompt = read_prompt(self.outline_prompt_path, self.language)
+
         # 1.5 时长画像：短视频不能套播客参数（#59）。写盘给 step2 / step3 复用
         from .quality import profile_from_srt, save_profile
         profile = profile_from_srt(srt_data)
         save_profile(profile, self.metadata_dir)
-        outline_prompt = self.outline_prompt + profile.prompt_hint()
+        outline_prompt = self.outline_prompt + profile.prompt_hint(self.language)
         logger.info(f"时长画像: {profile.tier}，总时长 {profile.total_sec:.0f}s，建议话题数 {profile.topics_hint}")
 
         # 2. 基于时间智能分块（短 / 中视频整条一块，长视频 ~30 分钟一块）
@@ -195,7 +206,9 @@ class OutlineExtractor:
             
             elif line.startswith('-') and current_outline:
                 subtopic = line[1:].strip()
-                if subtopic and len(subtopic) <= 200:
+                # 英文按词计比中文长约 3 倍，同等长度的要点不应被丢弃
+                max_len = 600 if getattr(self, "language", "zh") == "en" else 200
+                if subtopic and len(subtopic) <= max_len:
                     current_outline['subtopics'].append(subtopic)
         
         if current_outline:

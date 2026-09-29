@@ -209,7 +209,8 @@ def _generate_import_subtitle(task, project_id: str, video_path: str):
 
         if speech_config.method == "whisper_local":
             model = speech_config.whisper_config.model_name
-            language = speech_config.whisper_config.language
+            from backend.pipeline.language import transcription_language
+            language = transcription_language(speech_config.whisper_config.language)
             enable_timestamps = speech_config.whisper_config.enable_timestamps
             enable_punctuation = speech_config.whisper_config.enable_punctuation
             enable_speaker_diarization = speech_config.whisper_config.enable_speaker_diarization
@@ -264,10 +265,11 @@ def _generate_import_subtitle(task, project_id: str, video_path: str):
                 from backend.utils.speech_recognizer import generate_subtitle_for_video
 
                 if speech_config.fallback_method == "whisper_local":
+                    from backend.pipeline.language import transcription_language
                     fallback_config = speech_config.whisper_config
                     generated_subtitle = generate_subtitle_for_video(
                         Path(video_path),
-                        language=fallback_config.language,
+                        language=transcription_language(fallback_config.language),
                         model=fallback_config.model_name,
                         method=speech_config.fallback_method
                     )

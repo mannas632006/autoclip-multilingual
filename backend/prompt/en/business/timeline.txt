@@ -1,0 +1,82 @@
+# Business & Finance Video Timestamp Location Prompt
+
+## Core principles: precise, complete, clear business logic
+
+1.  **Precise location**: timestamps must correspond strictly to the core discussion of the business topic.
+2.  **Completeness**: the time range must fully cover all the key arguments of a business topic, so the business logic is complete.
+3.  **Natural boundaries**: prefer to place time points where a business viewpoint changes, a case study switches, or a logical section ends.
+
+## Language
+Keep the `outline` and `content` text in the same language as the transcript (English for an English video). Do not translate.
+
+---
+
+## Key instructions: how to decide `start_time` and `end_time`
+
+### Deciding `start_time`:
+-   Place it at the start time of the **first core statement** about the business topic.
+-   Ignore unrelated small talk, disclaimers or transition phrases before that statement.
+-   **Prefer**: start at a boundary in the business logic so the topic is introduced naturally and clearly.
+-   **Business content**: if there is important background or a data reference that sets it up, move the start earlier accordingly.
+
+### Deciding `end_time` (most important):
+-   It **must** be the **end timestamp of the last sentence** covering the core discussion of the business topic.
+-   **Complete business logic**: make sure the business analysis, investment advice, risk warnings and other core content are complete, with no gaps in the logic.
+-   **Natural ending**: prefer to end at a summarizing sentence, the conclusion of the investment advice, or a topic change.
+-   **Include risk warnings**: if there is an important risk warning or disclaimer at the end of the topic, include it.
+-   If the discussion of the business topic continues to the end of the provided SRT chunk, `end_time` should be the end timestamp of the last relevant subtitle.
+-   **Wrong approach**: blindly setting `end_time` to the end of the whole chunk. This must be avoided at all costs.
+
+### Duration control for business content:
+-   **Target length**: each business topic segment should be between 3 and 8 minutes
+-   **Complex analysis**: complex, multi-dimensional business topics can be extended to 10 minutes
+-   **Quick news**: market news flashes and policy briefs can be compressed to 2–3 minutes
+-   **Deep analysis**: in-depth content such as industry research and company analysis can be extended to 12 minutes
+
+### Special handling for business content:
+-   **Data-heavy passages**: passages with a lot of financial or market data should be kept whole
+-   **Case studies**: a complete business case study should stay together; avoid splitting it
+-   **Investment advice**: investment strategies and risk warnings should appear together and must not be separated
+-   **Policy analysis**: policy content and its impact analysis should stay complete
+
+---
+
+## Input format
+You will receive a JSON object containing:
+-   `outline`: a JSON array of **several** business topics to process.
+-   `srt_text`: the **single** SRT chunk related to this batch of topics, in the format `index\nstart --> end\ntext\n\n`.
+
+## Output format
+-   Follow the structure of the input outline exactly and add `start_time` and `end_time` fields to **each** topic object.
+-   **Key:** in the output, rename the input `title` field to `outline` (keeping its text exactly), and rename the `subtopics` field to `content`.
+-   Output one JSON array containing **all** processed topics.
+-   Make sure times use the format `HH:MM:SS,mmm`.
+
+**Strict JSON output requirements:**
+1. The output must start with `[` and end with `]`; do not add any explanation, heading or Markdown code-block markers
+2. Use standard straight double quotes ", never curly quotes “” or single quotes
+3. Make sure all braces and brackets match, objects are separated by commas, and there is no comma after the last object
+4. Quotes inside strings must be escaped as \"
+5. Do not include comments, extra text or control characters
+6. Make sure the JSON is completely valid and can be parsed by a standard JSON parser
+
+## Examples of locating business content
+
+### Correct location:
+- **Investment strategy discussion**: starts at "I think the current market..." and ends at "That's my investment advice"
+- **Company analysis**: starts at "Let's look at this company..." and ends at "the overall assessment"
+- **Industry trends**: starts at "The trend in this industry..." and ends at "the outlook"
+
+### Mistakes to avoid:
+- Cutting off in the middle of an explanation of financial data
+- Separating investment advice from its risk warning
+- Cutting at a key argument in a case study
+- Leaving out important market context
+
+## Notes
+
+1. **Complete business logic**: make sure each segment contains a complete line of business analysis
+2. **Data accuracy**: important financial and market data must be included in full
+3. **Risk balance**: investment advice and risk warnings should appear together
+4. **Timeliness**: keep market news tight; deep analysis can run longer
+5. **Audience fit**: consider the needs of audiences with different investment experience

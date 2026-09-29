@@ -1,0 +1,104 @@
+# Experience & How-To Video Timestamp Location Prompt
+
+## Core principles: complete experience, clear steps, practical value
+
+1.  **Complete experience**: timestamps must correspond strictly to a complete piece of shared experience and the method being introduced.
+2.  **Continuous steps**: the time range must fully cover all key steps of a piece of experience, so the logic of the method is complete.
+3.  **Natural boundaries**: prefer to place time points at natural boundaries such as a change of method, a switch of technique or a new experience topic.
+
+## Language
+Keep the `outline` and `content` text in the same language as the transcript (English for an English video). Do not translate.
+
+---
+
+## Key instructions: how to decide `start_time` and `end_time`
+
+### Deciding `start_time`:
+-   Place it at the start time of the **first core sentence** introducing the experience.
+-   Ignore unrelated transitions, personal chit-chat or background before it.
+-   **Prefer**: start where the experience topic is clearly raised, so the method is introduced completely.
+-   **Experience content**: if there is an important explanation of the context or the problem, move the start earlier accordingly.
+
+### Deciding `end_time` (most important):
+-   It **must** be the **end timestamp of the last sentence** covering the core of the shared experience.
+-   **Complete method**: make sure the introduction, steps, caveats and other core content are complete, with no gaps in the method.
+-   **Natural ending**: prefer to end at a summarizing sentence, an explanation of the results or a change of topic.
+-   **Include key practice points**: if the end of the experience includes important practice points or caveats, include them.
+-   If the discussion continues to the end of the provided SRT chunk, `end_time` should be the end timestamp of the last relevant subtitle.
+-   **Wrong approach**: blindly setting `end_time` to the end of the whole chunk. This must be avoided at all costs.
+
+### Duration control for experience content:
+-   **Target length**: each experience topic segment should be between 3 and 8 minutes
+-   **Complex methods**: complex methods with many steps can be extended to 10 minutes
+-   **Simple tips**: clear, concise small tips can be compressed to 2–3 minutes
+-   **Systems**: a complete method or workflow can be extended to 12 minutes
+
+### Special handling for experience content:
+-   **Steps**: a method with several steps should keep the whole process
+-   **Case examples**: important real examples and demonstrations of results should stay together
+-   **Key techniques**: core techniques and their caveats should appear together and must not be separated
+-   **Problem-solving**: the problem and its solution should both be fully included
+
+---
+
+## Input format
+You will receive a JSON object containing:
+-   `outline`: a JSON array of **several** experience topics to process.
+-   `srt_text`: the **single** SRT chunk related to this batch of topics, in the format `index\nstart --> end\ntext\n\n`.
+
+## Output format
+-   Follow the structure of the input outline exactly and add `start_time` and `end_time` fields to **each** topic object.
+-   **Key:** in the output, rename the input `title` field to `outline` (keeping its text exactly), and rename the `subtopics` field to `content`.
+-   Output one JSON array containing **all** processed topics.
+-   Make sure times use the format `HH:MM:SS,mmm`.
+
+**Strict JSON output requirements:**
+1. The output must start with `[` and end with `]`; do not add any explanation, heading or Markdown code-block markers
+2. Use standard straight double quotes ", never curly quotes “” or single quotes
+3. Make sure all braces and brackets match, objects are separated by commas, and there is no comma after the last object
+4. Quotes inside strings must be escaped as \"
+5. Do not include comments, extra text or control characters
+6. Make sure the JSON is completely valid and can be parsed by a standard JSON parser
+
+## Examples of locating experience content
+
+### Correct location:
+- **Introducing a method**: starts at "Let me share a method..." and ends at "That's the whole process"
+- **Sharing a tip**: starts at "Here's a little trick..." and ends at "Keep these points in mind"
+- **Solving a problem**: starts at "When you run into this problem..." and ends at "and that solves it"
+
+### Mistakes to avoid:
+- Cutting off in the middle of the steps
+- Separating the method from its key practice points
+- Cutting at a key point of a case example
+- Leaving out important caveats or explanations of results
+
+## Special considerations for experience content
+
+### 1. Methods and procedures:
+- Include the complete steps and process
+- Keep important key points and caveats
+- Include expected results and how to check them
+
+### 2. Tips and techniques:
+- Keep the technique complete and practical
+- Include when and under what conditions it applies
+- Make sure its key points are clearly expressed
+
+### 3. Problem-solving:
+- Include the full process from identifying the problem to solving it
+- Keep the reasoning behind the solution logical
+- Include how the result was verified
+
+### 4. Lessons learned:
+- Keep the complete summary and reflection
+- Include what drove success and what was learned from failure
+- Include an explanation of how the experience can be repeated
+
+## Notes
+
+1. **Complete method**: make sure each segment contains a complete introduction of the method and its key points
+2. **Practical value**: important practical techniques and caveats must be included in full
+3. **Logical flow**: keep the line of reasoning of the shared experience complete
+4. **Actionability**: the steps and key points should be clear and complete
+5. **Neutrality**: stay objective when choosing timestamps and do not judge the value of the experience

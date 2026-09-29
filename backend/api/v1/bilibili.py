@@ -311,7 +311,8 @@ async def process_download_task(task_id: str, request: BilibiliDownloadRequest, 
                 
                 # 根据视频信息选择合适的模型，但始终使用自动语言检测
                 model = "base"  # 默认使用平衡模型
-                language = "auto"  # 始终使用自动语言检测
+                from ...pipeline.language import transcription_language
+                language = transcription_language("auto")  # 始终使用自动语言检测；AUTOCLIP_CONTENT_LANGUAGE 可固定
                 
                 # 可以根据视频标题或描述判断内容类型，选择不同的模型大小
                 if video_info.title and any(keyword in video_info.title.lower() for keyword in ['教程', '教学', '知识', '科普']):

@@ -373,8 +373,14 @@ async def generate_collection_title(
 
         llm_client = LLMClient()
 
-        with open(PROMPT_FILES['collection_title'], 'r', encoding='utf-8') as f:
-            title_prompt = f.read()
+        # 英文合集用 prompt/en/ 下的英文版提示词
+        from ...pipeline.language import language_of_payload, read_prompt
+        lang = language_of_payload({
+            "collection_title": collection.name,
+            "collection_description": collection.description or "",
+            "clips": [{k: v for k, v in c.items() if k != "id"} for c in clips_data],
+        })
+        title_prompt = read_prompt(PROMPT_FILES['collection_title'], lang)
 
         raw_response = llm_client.call_with_retry(title_prompt, llm_input)
 

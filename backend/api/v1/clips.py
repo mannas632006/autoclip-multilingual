@@ -100,9 +100,10 @@ async def generate_clip_title(
         
         llm_client = LLMClient()
         
-        # 加载标题生成提示词
-        with open(PROMPT_FILES['title'], 'r', encoding='utf-8') as f:
-            title_prompt = f.read()
+        # 加载标题生成提示词（英文切片用 prompt/en/ 下的英文版）
+        from ...pipeline.language import language_of_payload, read_prompt
+        lang = language_of_payload([{k: v for k, v in item.items() if k != "id"} for item in llm_input])
+        title_prompt = read_prompt(PROMPT_FILES['title'], lang)
         
         # 调用LLM
         raw_response = llm_client.call_with_retry(title_prompt, llm_input)

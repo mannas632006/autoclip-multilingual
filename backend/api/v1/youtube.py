@@ -514,7 +514,8 @@ async def process_youtube_download_task(task_id: str, request: YouTubeDownloadRe
                 
                 # 根据视频信息选择合适的模型
                 model = "base"  # 默认使用平衡模型
-                language = "auto"  # 默认自动检测语言
+                from ...pipeline.language import transcription_language
+                language = transcription_language("auto")  # 默认自动检测语言；AUTOCLIP_CONTENT_LANGUAGE 可固定
                 
                 # 可以根据视频标题判断内容类型
                 # 这里可以添加更智能的内容类型判断逻辑

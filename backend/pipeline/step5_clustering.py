@@ -13,21 +13,97 @@ from ..core.shared_config import PROMPT_FILES, METADATA_DIR, MAX_CLIPS_PER_COLLE
 
 logger = logging.getLogger(__name__)
 
+
+def _word_patterns(words: List[str]) -> List["re.Pattern[str]"]:
+    return [re.compile(r"\b" + re.escape(w.lower()) + r"\b") for w in words]
+
+
+# 英文内容的预聚类主题：对应中文版的 8 个主题，外加英文长视频里常见的科技 / 创业两类。
+# 只在 LLM 聚类结果不足时兜底使用，逻辑与中文版一致。
+EN_THEMES: Dict[str, Dict[str, Any]] = {
+    'Money & Investing': {
+        'words': ['invest', 'investing', 'investment', 'investor', 'investors', 'stock', 'stocks', 'fund', 'funds',
+                  'market', 'markets', 'money', 'finance', 'financial', 'trading', 'returns', 'savings', 'portfolio', 'crypto', 'wealth'],
+        'title': 'Money & investing lessons',
+        'summary': 'Practical ideas about money, markets and investing, told through real examples.',
+    },
+    'Career & Growth': {
+        'words': ['career', 'careers', 'job', 'jobs', 'work', 'working', 'skill', 'skills', 'learn', 'learning', 'education',
+                  'student', 'students', 'college', 'university', 'promotion', 'hiring', 'interview', 'manager', 'mentor'],
+        'title': 'Career & growth',
+        'summary': 'Career moves, new skills and the mindset behind professional growth.',
+    },
+    'Society & Trends': {
+        'words': ['society', 'social', 'trend', 'trends', 'internet', 'online', 'policy', 'government', 'industry',
+                  'economy', 'economic', 'generation', 'phenomenon', 'news', 'regulation', 'politics'],
+        'title': 'Society & trends',
+        'summary': 'Clear-eyed takes on social trends, industries and what is changing.',
+    },
+    'Culture & Travel': {
+        'words': ['culture', 'cultural', 'country', 'countries', 'travel', 'traveling', 'food', 'language', 'languages',
+                  'abroad', 'tradition', 'traditions', 'city', 'cities', 'america', 'europe', 'asia'],
+        'title': 'Culture & travel',
+        'summary': 'From food to language, a fun look at differences across cultures and places.',
+    },
+    'Live & Community': {
+        'words': ['livestream', 'stream', 'streaming', 'live', 'chat', 'fans', 'viewers', 'subscribers', 'donation',
+                  'donations', 'giveaway', 'q&a', 'audience', 'community', 'comments'],
+        'title': 'Live moments & community',
+        'summary': 'Real interactions with the audience and quick reactions on the spot.',
+    },
+    'Relationships & Mind': {
+        'words': ['relationship', 'relationships', 'dating', 'love', 'family', 'friend', 'friends', 'friendship',
+                  'psychology', 'emotion', 'emotions', 'emotional', 'mental', 'feelings', 'marriage', 'parenting'],
+        'title': 'Relationships & the mind',
+        'summary': 'Dating, family, friendship and the psychology behind how we connect.',
+    },
+    'Health & Lifestyle': {
+        'words': ['health', 'healthy', 'fitness', 'exercise', 'running', 'diet', 'sleep', 'nutrition', 'workout',
+                  'gym', 'lifestyle', 'habits', 'habit', 'wellness', 'stress'],
+        'title': 'Health & lifestyle',
+        'summary': 'Exercise, food, sleep and everyday habits for a healthier life.',
+    },
+    'Creators & Platforms': {
+        'words': ['creator', 'creators', 'content', 'youtube', 'tiktok', 'instagram', 'podcast', 'podcasts',
+                  'algorithm', 'views', 'channel', 'brand', 'photography', 'video', 'videos', 'influencer'],
+        'title': 'Creators & platforms',
+        'summary': 'The realities of making content and how platforms and algorithms shape it.',
+    },
+    'Technology & AI': {
+        'words': ['ai', 'technology', 'tech', 'software', 'hardware', 'data', 'robot', 'robots', 'chip', 'chips',
+                  'computer', 'computing', 'internet', 'app', 'apps', 'model', 'models', 'engineering', 'battery', 'energy'],
+        'title': 'Technology & AI',
+        'summary': 'How new technology works and what it changes.',
+    },
+    'Business & Startups': {
+        'words': ['startup', 'startups', 'founder', 'founders', 'business', 'company', 'companies', 'customer',
+                  'customers', 'product', 'revenue', 'fundraising', 'funding', 'investors', 'ceo', 'sales', 'growth'],
+        'title': 'Business & startups',
+        'summary': 'Building companies: founders, customers, products and funding.',
+    },
+}
+for _cfg in EN_THEMES.values():
+    _cfg['patterns'] = _word_patterns(_cfg['words'])
+
 class ClusteringEngine:
     """主题聚类引擎"""
     
     def __init__(self, metadata_dir: Optional[Path] = None, prompt_files: Dict = None):
         self.llm_client = LLMClient()
         
-        # 加载提示词
-        prompt_files_to_use = prompt_files if prompt_files is not None else PROMPT_FILES
-        with open(prompt_files_to_use['clustering'], 'r', encoding='utf-8') as f:
-            self.clustering_prompt = f.read()
-        
         # 使用传入的metadata_dir或默认值
         if metadata_dir is None:
             metadata_dir = METADATA_DIR
         self.metadata_dir = metadata_dir
+
+        # 加载提示词（英文内容换用 prompt/en/ 下的同款提示词）
+        from .language import load_language, read_prompt
+        prompt_files_to_use = prompt_files if prompt_files is not None else PROMPT_FILES
+        self.language = load_language(self.metadata_dir)
+        self.clustering_prompt = read_prompt(prompt_files_to_use['clustering'], self.language)
+
+    def _is_en(self) -> bool:
+        return getattr(self, "language", "zh") == "en"
     
     def cluster_clips(self, clips_with_titles: List[Dict]) -> List[Dict]:
         """
@@ -55,13 +131,22 @@ class ClusteringEngine:
         pre_clusters = self._pre_cluster_by_keywords(clips_for_clustering)
         
         # 构建完整的提示词
-        full_prompt = self.clustering_prompt + "\n\n以下是视频切片列表：\n"
-        for i, clip in enumerate(clips_for_clustering, 1):
-            full_prompt += f"{i}. 标题：{clip['title']}\n   摘要：{clip['summary']}\n   评分：{clip['score']:.2f}\n\n"
+        if self._is_en():
+            full_prompt = self.clustering_prompt + "\n\nHere is the list of video clips:\n"
+            for i, clip in enumerate(clips_for_clustering, 1):
+                full_prompt += f"{i}. Title: {clip['title']}\n   Summary: {clip['summary']}\n   Score: {clip['score']:.2f}\n\n"
+        else:
+            full_prompt = self.clustering_prompt + "\n\n以下是视频切片列表：\n"
+            for i, clip in enumerate(clips_for_clustering, 1):
+                full_prompt += f"{i}. 标题：{clip['title']}\n   摘要：{clip['summary']}\n   评分：{clip['score']:.2f}\n\n"
         
         # 添加预聚类结果作为参考
         if pre_clusters:
-            full_prompt += "\n\n基于关键词的预聚类结果（仅供参考）：\n"
+            full_prompt += (
+                "\n\nKeyword-based pre-clustering (for reference only; values are clip ids):\n"
+                if self._is_en() else
+                "\n\n基于关键词的预聚类结果（仅供参考）：\n"
+            )
             for theme, clip_ids in pre_clusters.items():
                 full_prompt += f"{theme}: {', '.join(clip_ids)}\n"
         
@@ -102,6 +187,9 @@ class ClusteringEngine:
         Returns:
             预聚类结果
         """
+        if self._is_en():
+            return self._pre_cluster_by_keywords_en(clips)
+
         # 定义主题关键词
         theme_keywords = {
             '投资理财': ['投资', '理财', '股票', '基金', '炒股', '赚钱', '收益', '涨跌', '解套', '散户', 'A股', '北交所', '中免', '种业'],
@@ -134,6 +222,21 @@ class ClusteringEngine:
         
         # 过滤掉空的主题
         return {theme: clip_ids for theme, clip_ids in pre_clusters.items() if len(clip_ids) >= 2}
+
+    def _pre_cluster_by_keywords_en(self, clips: List[Dict]) -> Dict[str, List[str]]:
+        """英文版预聚类：与中文版同样的打分与筛选规则，只是按整词匹配英文关键词。"""
+        pre_clusters = {theme: [] for theme in EN_THEMES}
+        for clip in clips:
+            text = f"{clip['title']} {clip['summary']}".lower()
+            theme_scores = {}
+            for theme, cfg in EN_THEMES.items():
+                score = sum(1 for pattern in cfg['patterns'] if pattern.search(text))
+                if score > 0:
+                    theme_scores[theme] = score
+            if theme_scores:
+                best_theme = max(theme_scores.keys(), key=lambda k: theme_scores[k])
+                pre_clusters[best_theme].append(clip['id'])
+        return {theme: clip_ids for theme, clip_ids in pre_clusters.items() if len(clip_ids) >= 2}
     
     def _create_collections_from_pre_clusters(self, pre_clusters: Dict[str, List[str]], clips_with_titles: List[Dict]) -> List[Dict]:
         """
@@ -146,6 +249,18 @@ class ClusteringEngine:
         Returns:
             合集数据列表
         """
+        if self._is_en():
+            collections = []
+            for collection_id, (theme, clip_ids) in enumerate(pre_clusters.items(), 1):
+                cfg = EN_THEMES.get(theme, {})
+                collections.append({
+                    'id': str(collection_id),
+                    'collection_title': cfg.get('title', theme),
+                    'collection_summary': cfg.get('summary', f'Highlights about {theme.lower()}.'),
+                    'clip_ids': clip_ids[:MAX_CLIPS_PER_COLLECTION],
+                })
+            return collections
+
         collections = []
         collection_id = 1
         
@@ -272,8 +387,8 @@ class ClusteringEngine:
         if len(high_score) >= 2:
             collections.append({
                 'id': '1',
-                'collection_title': '精选高分片段',
-                'collection_summary': '评分最高的精彩片段合集',
+                'collection_title': 'Top-rated highlights' if self._is_en() else '精选高分片段',
+                'collection_summary': 'The highest-scoring clips from this video.' if self._is_en() else '评分最高的精彩片段合集',
                 'clip_ids': [clip['id'] for clip in high_score[:MAX_CLIPS_PER_COLLECTION]]
             })
         
@@ -281,8 +396,8 @@ class ClusteringEngine:
         if len(medium_score) >= 2:
             collections.append({
                 'id': '2',
-                'collection_title': '优质内容推荐',
-                'collection_summary': '精选优质内容片段',
+                'collection_title': 'More worth watching' if self._is_en() else '优质内容推荐',
+                'collection_summary': 'Other strong clips from this video.' if self._is_en() else '精选优质内容片段',
                 'clip_ids': [clip['id'] for clip in medium_score[:MAX_CLIPS_PER_COLLECTION]]
             })
         

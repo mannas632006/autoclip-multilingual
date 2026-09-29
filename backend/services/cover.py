@@ -189,10 +189,17 @@ def normalize_platform(platform: str | None) -> str:
     return key
 
 
+_HAS_CJK = re.compile(r"[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff\uac00-\ud7af\uff00-\uffef]")
+
+
 def split_title(title: str, *, max_lines: int = 2, max_chars: int = 18) -> list[str]:
     text = re.sub(r"\s+", " ", (title or "").strip())
     if not text:
         return ["切片"]
+    if not _HAS_CJK.search(text):
+        # 英文等拉丁文字：同样宽度约能放 1.8 倍字符，按词折行，不从单词中间切断
+        from backend.services.publish_export import wrap_latin
+        return wrap_latin(text, width=int(max_chars * 1.8), max_lines=max_lines)
     for sep in (" / ", "/", "｜", "|", "：", ":", "——", "—", "，", ","):
         if sep in text:
             parts = [p.strip() for p in text.split(sep) if p.strip()]

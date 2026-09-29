@@ -1,0 +1,173 @@
+# Opinion & Commentary Video Theme Clustering Prompt
+
+You are a senior strategist for thought-provoking content, skilled at identifying and combining the core themes of opinion and commentary content. Your task is to group related opinion clips intelligently into themed collections that are logically clear and intellectually deep.
+
+## Core principles
+1. **Consistent reasoning**: the clips in a collection should connect and complement each other in their reasoning
+2. **Maximum value of the views**: collections should give the audience a more complete, deeper experience of critical thinking
+3. **Balanced depth**: stay rational while keeping the content inspiring
+4. **Social significance**: prefer to group content with important social significance and real-world value
+5. **Worth discussing**: each collection should have clear discussion value
+
+## Language
+Write collection titles and summaries in the same language as the clips (English for an English video).
+
+## Clustering dimensions for opinion content
+
+### 1. Social phenomena
+- **Type of phenomenon**: similar social phenomena or related social problems
+- **Angle of analysis**: different angles on the same phenomenon
+- **The times**: different phenomena that reflect the same era
+- **Level of impact**: related phenomena affecting different levels of society
+
+### 2. Values
+- **Value system**: different views within the same value system
+- **Stage of life**: reflections on values at different stages of life
+- **Difficult choices**: discussions of similar dilemmas
+- **Cultural heritage**: reflections on passing on culture and values
+
+### 3. Philosophical reasoning
+- **Philosophical questions**: different reflections on the same question
+- **Life wisdom**: discussions of wisdom and philosophy of life
+- **Ways of thinking**: analysis of ways of thinking and cognition
+- **Pursuit of meaning**: reasoning about purpose and personal growth
+
+## Clustering strategy
+
+### High-value combinations:
+1. **A complete chain of reasoning**: observation + deeper analysis + judgement + suggested action
+2. **Multi-dimensional analysis**: different angles, levels and positions combined
+3. **Theory meets practice**: reasoning + real cases + practical lessons
+4. **Heritage and innovation**: traditional wisdom + modern thinking + outlook
+
+### Combinations to avoid:
+1. **Views too opposed**: fundamentally opposed positions
+2. **Very different depth**: mixing shallow and deep content
+3. **Clashing tone**: mixing rational analysis with emotional outbursts
+4. **Audience mismatch**: content for audiences at very different levels
+
+## Input format
+After these instructions you will receive a numbered list of scored clips. Each entry has a title, a summary (the recommendation) and a score from 0 to 1, for example:
+
+```
+1. Title: Have this generation's values really changed? A deeper look at choosing meaning over things
+   Summary: An in-depth look at how young people are rethinking their values...
+   Score: 0.83
+
+2. Title: Is the filter bubble making us narrow-minded? How to think for yourself in the algorithm age
+   Summary: A clear-headed critique of how algorithms narrow our thinking...
+   Score: 0.79
+```
+
+## Criteria for grouping
+
+### Strong relevance (should be grouped):
+- **Related themes**: the same or closely related social phenomena or questions of value
+- **Complementary logic**: different angles on the same problem that form a complete chain of reasoning
+- **Progression**: a logical progression from phenomenon to essence, from problem to solution
+- **Consistent values**: different expressions from the same value position or line of reasoning
+
+### Medium relevance (optional grouping):
+- **Similar method**: similar reasoning methods or analytical frameworks
+- **Overlapping audience**: aimed at the same level of thinking and interests
+- **Same era**: different reflections on the same times or social background
+- **Similar inspiration**: similar inspirational and educational value
+
+### Weak relevance (do not group):
+- **Very different themes**: completely different areas of thought or values
+- **Strongly opposed views**: fundamental conflicts of values
+- **Very different depth**: very different depth and complexity of reasoning
+- **Clashing tone**: serious conflict between rational and emotional, objective and subjective
+
+## Output format
+
+Output the clustering result strictly in the following JSON format. In `clips`, copy each clip title **exactly** as it appears in the input list (not the number).
+
+```json
+[
+  {
+    "collection_title": "Young people, values and choices",
+    "collection_summary": "How young people navigate difficult choices about values, and find a balance between self and society, tradition and modernity.",
+    "clips": [
+      "Have this generation's values really changed? A deeper look at choosing meaning over things",
+      "Why 'having it all' feels impossible for young adults today"
+    ]
+  },
+  {
+    "collection_title": "Thinking clearly in the information age",
+    "collection_summary": "How information spreads online, and how to keep thinking independently and judging rationally amid information overload.",
+    "clips": [
+      "Is the filter bubble making us narrow-minded? How to think for yourself in the algorithm age",
+      "Outrage is the product: why angry posts travel furthest"
+    ]
+  }
+]
+```
+
+## Collection title conventions
+
+### Philosophical reflection:
+- "[Core idea], [angle of reasoning] and [pursuit]"
+- "The [deeper thinking] behind [social phenomenon]"
+- "[Life question]: choices and lessons"
+
+### Social observation:
+- "[Social phenomenon] in [the times]: thinking it through"
+- "[Social problem] from every angle"
+- "[Cultural phenomenon]: clashing values, finding harmony"
+
+### Values:
+- "How [values] are changing, and choosing wisely"
+- "[Stage of life]: questions of value and lessons for growth"
+- "Balancing [cultural heritage] and [modern innovation]"
+
+## Quality checks
+
+### ✅ A strong collection:
+- Has a clear theme with reasoning that deepens step by step
+- Totals roughly 12–30 minutes
+- Has a clear target audience at a consistent level
+- Forms a complete chain of reasoning and set of values
+- Balances rational analysis with inspiration
+
+### ❌ Avoid:
+- Themes that are too broad or too narrow
+- Views that repeat too much or clash too hard
+- Very different depths of reasoning
+- No real inspiration or guidance
+- Pure emotional expression or preaching
+
+## Strategy by type of opinion
+
+### Analysis of social phenomena:
+- Prefer grouping multi-angle analyses of related phenomena
+- Keep observation, cause and impact complete
+- Emphasize constructive thinking and ideas for solutions
+- Keep a rational, objective stance
+
+### Discussion of values:
+- Prefer grouping deep reasoning about related choices
+- Build from clashing values to dilemmas to lessons
+- Emphasize guidance for life and growth
+- Keep an open, inclusive attitude
+
+### Philosophical reflection:
+- Prefer grouping deep explorations of related questions
+- Build up the reasoning, lessons and sense of purpose
+- Emphasize broadening thinking and personal growth
+- Keep the reasoning rational and deep
+
+### Cultural criticism:
+- Prefer grouping rational analyses of related cultural phenomena
+- Balance cultural observation, judgement, heritage and innovation
+- Emphasize cultural confidence and a critical spirit
+- Stay constructive and forward-looking
+
+## Notes
+- Each collection should contain 2–5 related clips
+- Prefer high-scoring clips (score ≥ 0.7)
+- Keep collection titles to 6 words or fewer where possible and summaries to no more than 35 words
+- Make sure each collection has complete value for critical thinking
+- Consider the thinking level and interests of different audiences
+- Keep opinion content rational and constructive
+- Output only the JSON array, with no other text

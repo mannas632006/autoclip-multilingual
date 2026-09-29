@@ -1,0 +1,124 @@
+# Experience & How-To Video Outline Extraction Prompt
+
+## Input format
+You will receive a JSON input:
+
+{
+  "text": "{a segment of the video transcript}"
+}
+
+- The `text` field is one segment of the video transcript;
+- The content has been checked and is broadly coherent;
+- Use only the input as your source of information. Do not add outside knowledge, common-sense inferences or logical filler.
+
+## Language
+Write every topic name and subtopic in the same language as the transcript (English for an English video). Do not translate.
+
+## Core task: practical value and actionability together
+Your task is to **fully cover** every important experience and technique in the input text while staying **reasonably concise** and avoiding over-fragmentation. The goal is to extract **8–15 core topics**, each corresponding to **3–8 minutes** of video.
+
+## Topic extraction principles
+
+### 1. Practical value first
+- **Actionability first**: prioritize experience with clear steps and practical techniques
+- **Problem-solving**: focus on experience that solves specific problems and meets real needs
+- **No empty talk**: skip purely theoretical discussion and focus on concrete experience that can be copied and practiced
+
+### 2. Complete experience
+- **A full method**: make sure each piece of experience contains a complete method (context – method – result – caveats)
+- **Rich in detail**: focus on descriptions with specific details and key points
+- **Proven results**: highlight experience that includes real results and success stories
+
+### 3. Fit for the audience
+- **Reasonable entry level**: prioritize experience that matches the target audience's ability
+- **Clear scenarios**: focus on experience with a clear use case and conditions
+- **Repeatable**: highlight methods that apply broadly and are easy to copy
+
+### 4. Levels of value
+- **Core skills**: prioritize key skills and core methods
+- **Advanced techniques**: focus on advanced tips that improve efficiency and results
+- **Pitfalls to avoid**: highlight lessons about preventing mistakes and avoiding risks
+
+## Merging and splitting strategy
+
+### Merge (these should become one topic):
+- Different aspects or levels of the same skill or method
+- Connected steps or stages of a process
+- Different solutions or techniques for the same problem
+- Different applications in similar situations
+
+### Split (these should become separate topics):
+- Experience from different skill areas or use cases
+- A clear difference between basic skills and advanced techniques
+- Solutions to different types of problems
+- Learning the theory separated from applying it in practice
+
+## Output format
+
+Output strictly in the following format, with no other descriptive text:
+
+### Outline:
+1.  **[Top-level topic name]**
+    - [Subtopic 1: emphasize practicality and actionability]
+    - [Subtopic 2: emphasize practicality and actionability]
+    - …
+
+2.  **[Top-level topic name]**
+    - [Subtopic 1]
+    - …
+
+Formatting rules (the output is parsed by a program):
+- Each topic line starts with its number, a period, and the topic name wrapped in double asterisks: `1.  **Topic name**`
+- Each subtopic is on its own line starting with `- `
+- Do not use asterisks anywhere else in a topic line, and do not use numbered lines for subtopics
+
+## Output example
+
+### Outline:
+1.  **Effective study methods and techniques in practice**
+    - The exact steps and timing of the Pomodoro technique
+    - Applying the Feynman technique across different subjects
+    - How to build a memory palace and key points for practice
+    - Using SMART goals to plan your studying
+
+2.  **Workplace communication skills and real experience**
+    - How to prepare for and deliver a point in a meeting
+    - Email formatting conventions and things to watch for
+    - Communication strategies and conflict handling across teams
+    - Reporting to your manager: what to say and when
+
+3.  **Building a personal time-management system**
+    - Steps to set up a GTD workflow and choose tools
+    - Prioritizing your schedule and allocating time
+    - Concrete ways to beat procrastination and manage your mindset
+    - Setting and keeping boundaries between work and life
+
+## Special considerations for experience content
+
+### 1. Step-by-step experience:
+- Keep the steps complete and in logical order
+- Include the key points and caveats
+- Give concrete timing and expected results
+
+### 2. Techniques and methods:
+- Make clear when and under what conditions the technique applies
+- Include specific details and key points for practice
+- Give ways to evaluate results and improve
+
+### 3. Problem-solving experience:
+- Describe clearly how the problem was identified and analyzed
+- Include why a solution was chosen and how it was carried out
+- Give ways to verify the result and keep improving
+
+### 4. Pitfalls to avoid:
+- Make clear the warning signs of the mistake and how to prevent it
+- Include what to do after the mistake happens
+- Give strategies for similar situations
+
+## Notes
+
+1. **Practicality check**: make sure the extracted topics have clear practical value and actionability
+2. **Completeness**: focus on content with a complete method and specific details
+3. **Fit**: prioritize experience that matches the target audience's ability
+4. **Repeatability**: make sure the methods apply broadly and can be copied
+5. **Levels of value**: distinguish basic skills, advanced techniques and professional experience

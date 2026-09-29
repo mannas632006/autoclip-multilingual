@@ -1,0 +1,137 @@
+# Talks & Stand-Up Video Timestamp Location Prompt
+
+## Core principles: complete delivery, emotional continuity, keep the effect
+
+1.  **Complete delivery**: timestamps must correspond strictly to complete units of delivery and passages.
+2.  **Emotional continuity**: the time range must fully cover the arc of an emotional moment, so the emotional logic is complete.
+3.  **Natural boundaries**: prefer to place time points at natural boundaries such as a change of topic, a change of emotion or a break in the rhythm of delivery.
+
+## Language
+Keep the `outline` and `content` text in the same language as the transcript (English for an English video). Do not translate.
+
+---
+
+## Key instructions: how to decide `start_time` and `end_time`
+
+### Deciding `start_time`:
+-   Place it at the start time of the **first core sentence** of the topic.
+-   Ignore unrelated transitions, pauses or background music before it.
+-   **Prefer**: start where the topic is clearly raised or the emotional moment begins, so the delivery is complete.
+-   **Talks and stand-up**: if there is important setup, an introduction or atmosphere-building, move the start earlier accordingly.
+
+### Deciding `end_time` (most important):
+-   It **must** be the **end timestamp of the last sentence** covering the core of the topic.
+-   **Complete delivery**: make sure the point, the story or the punchline is complete, with no gaps.
+-   **Natural ending**: prefer to end at a summarizing sentence, after an emotional high point, or at a topic change.
+-   **Keep the effect**: if the topic ends with an important audience reaction, laughter or applause, include it.
+-   If the topic continues to the end of the provided SRT chunk, `end_time` should be the end timestamp of the last relevant subtitle.
+-   **Wrong approach**: blindly setting `end_time` to the end of the whole chunk. This must be avoided at all costs.
+
+### Duration control for talks and stand-up:
+-   **Target length**: each topic segment should be between 3 and 8 minutes
+-   **Deep talks**: talks with deep thinking or complex arguments can be extended to 10 minutes
+-   **Great bits**: a complete standalone joke can be compressed to 2–3 minutes
+-   **Important talks**: a core keynote or key argument can be extended to 12 minutes
+
+### Special handling for talks and stand-up:
+-   **Complete bits**: a joke with setup, development and punchline should stay together
+-   **Emotion**: important emotional build-up and atmosphere should be kept whole
+-   **Audience interaction**: interaction, Q&A and live reactions should appear together
+-   **Arguments**: the statement, argument and conclusion of a core point should all be included
+
+---
+
+## Input format
+You will receive a JSON object containing:
+-   `outline`: a JSON array of **several** topics to process.
+-   `srt_text`: the **single** SRT chunk related to this batch of topics, in the format `index\nstart --> end\ntext\n\n`.
+
+## Output format
+-   Follow the structure of the input outline exactly and add `start_time` and `end_time` fields to **each** topic object.
+-   **Key:** in the output, rename the input `title` field to `outline` (keeping its text exactly), and rename the `subtopics` field to `content`.
+-   Output one JSON array containing **all** processed topics.
+-   Make sure times use the format `HH:MM:SS,mmm`.
+
+**Strict JSON output requirements:**
+1. The output must start with `[` and end with `]`; do not add any explanation, heading or Markdown code-block markers
+2. Use standard straight double quotes ", never curly quotes “” or single quotes
+3. Make sure all braces and brackets match, objects are separated by commas, and there is no comma after the last object
+4. Quotes inside strings must be escaped as \"
+5. Do not include comments, extra text or control characters
+6. Make sure the JSON is completely valid and can be parsed by a standard JSON parser
+
+## Examples of locating talks and stand-up
+
+### Correct location:
+- **A point in a talk**: starts at "I want to share an idea with you..." and ends at "That's how I see it"
+- **A stand-up bit**: from the setup of the joke to the punchline and the end of the audience reaction
+- **A story**: starts at "Let me tell you a story..." and ends with the story's conclusion and lesson
+- **Live interaction**: from the start of the interaction to its end and the wrap-up
+
+### Mistakes to avoid:
+- Cutting off at the punchline of a joke
+- Separating a point from its argument
+- Cutting at the emotional high point
+- Leaving out important audience reactions or live effect
+
+## Special considerations for talks and stand-up
+
+### 1. Talks:
+- Keep the complete statement and argument of each point
+- Keep important emotional and moving content
+- Include interaction with the audience and their reactions
+- Make sure inspiring content comes through in full
+
+### 2. Stand-up:
+- Keep jokes complete and funny
+- Include the full structure of setup, development and punchline
+- Keep the audience's laughter and live reactions
+- Show the comedic technique in full
+
+### 3. Interviews:
+- Include the full process of question and answer
+- Keep the conversation natural, flowing and logical
+- Keep in-depth exchanges complete
+- Include important clashes of views and exchanges of ideas
+
+### 4. Live performance:
+- Keep improvised moments complete and natural
+- Include real-time interaction and feedback from the audience
+- Show performance technique in full
+- Keep the atmosphere and emotional impact
+
+## Timestamp strategies by type
+
+### Keynotes:
+- Locate by layers of the argument: core point – supporting evidence – summary and elevation
+- Keep the argument complete
+- Include important emotional and moving content
+- Make sure the inspiring and educational value comes through in full
+
+### Stand-up sets:
+- Locate by units of material: standalone bits – runs of jokes – thematic threads
+- Keep the comedic effect complete
+- Include audience reactions and live effect
+- Maximize the entertainment value
+
+### Interviews:
+- Locate by topic of discussion: question – in-depth exchange – summary of views
+- Keep the conversation natural and flowing
+- Include important clashes of views and exchanges of ideas
+- Keep the information complete
+
+### Sharing experience:
+- Locate by stage of the experience: background – what happened – reflection and lesson
+- Keep the story complete and moving
+- Include important life lessons and inspiration
+- Deliver the value of the experience in full
+
+## Notes
+
+1. **Complete delivery**: make sure each segment contains a complete line of delivery and structure
+2. **Emotional continuity**: important emotional moments and atmosphere must be included in full
+3. **Keep the effect**: treat punchlines, applause and audience reactions as important content
+4. **Interaction**: keep great live interaction and audience participation whole
+5. **Inspiration**: for talks, make sure the inspiring and educational value comes through in full
+6. **Entertainment**: for stand-up, keep the humor and entertainment value complete
+7. **Authentic**: keep the content genuine with a live feel; avoid over-editing

@@ -28,10 +28,11 @@ class TimelineExtractor:
             metadata_dir = METADATA_DIR
         self.metadata_dir = metadata_dir
         
-        # 加载提示词
+        # 加载提示词（英文内容换用 prompt/en/ 下的同款提示词）
+        from .language import load_language, read_prompt
         prompt_files_to_use = prompt_files if prompt_files is not None else PROMPT_FILES
-        with open(prompt_files_to_use['timeline'], 'r', encoding='utf-8') as f:
-            self.timeline_prompt = f.read()
+        self.language = load_language(self.metadata_dir)
+        self.timeline_prompt = read_prompt(prompt_files_to_use['timeline'], self.language)
             
         # SRT块的目录
         self.srt_chunks_dir = self.metadata_dir / "step1_srt_chunks"
@@ -64,7 +65,7 @@ class TimelineExtractor:
         # 时长画像追加到提示词（覆盖提示词里写死的 90 秒 / 3–6 分钟）
         from .quality import load_profile
         profile = load_profile(self.metadata_dir)
-        timeline_prompt = self.timeline_prompt + (profile.prompt_hint() if profile else "")
+        timeline_prompt = self.timeline_prompt + (profile.prompt_hint(self.language) if profile else "")
 
         # 2. 按 chunk_index 对所有大纲进行分组
         outlines_by_chunk = defaultdict(list)
@@ -138,6 +139,9 @@ class TimelineExtractor:
                             all_timeline_data.extend(parsed_items)
                             break
                         input_data['additional_instruction'] = (
+                            "Return only a valid JSON array with straight double quotes; start and end times "
+                            "must be copied from the current subtitle chunk, and each end must be after its start."
+                            if self.language == "en" else
                             "仅返回有效 JSON 数组，使用英文双引号；起止时间必须引用当前字幕块，结束晚于开始。"
                         )
                     except Exception as parse_error:

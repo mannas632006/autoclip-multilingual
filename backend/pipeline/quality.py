@@ -63,10 +63,20 @@ class DurationProfile:
     merge_gap_sec: float = 5.0     # 太短且与相邻段间隔小于此则合并
     overlap_merge_ratio: float = 0.5  # 重叠超过较短者的这一比例 → 合并
 
-    def prompt_hint(self) -> str:
-        """追加到 step1 / step2 提示词末尾，覆盖提示词里写死的时长规则。"""
+    def prompt_hint(self, language: str = "zh") -> str:
+        """追加到 step1 / step2 提示词末尾，覆盖提示词里写死的时长规则。language="en" 时输出英文版（数值完全相同）。"""
         lo, hi = self.target_clip_sec
         n_lo, n_hi = self.topics_hint
+        if language == "en":
+            total = f"{int(self.total_sec // 60)} min {int(self.total_sec % 60)} s"
+            return (
+                "\n\n---\n\n## Parameters for this task (these override every duration and count rule above)\n"
+                f"- Total video length: {total} ({self.tier} type)\n"
+                f"- Extract {n_lo}–{n_hi} topics for the whole video; topics must not overlap\n"
+                f"- Target length per segment {_fmt_dur_en(lo)}–{_fmt_dur_en(hi)}, never shorter than {_fmt_dur_en(self.min_clip_sec)}, never longer than {_fmt_dur_en(self.max_clip_sec)}\n"
+                "- Any specific numbers above (\"at least 90 seconds\", \"3–6 minutes\", etc.) are replaced by this section\n"
+                "- Start and end times must fall on subtitle-line boundaries: copy the timestamps of the subtitle lines exactly, do not calculate your own\n"
+            )
         total = f"{int(self.total_sec // 60)} 分 {int(self.total_sec % 60)} 秒"
         return (
             "\n\n---\n\n## 本次任务参数（优先级高于上文所有时长与数量规则）\n"
@@ -91,6 +101,16 @@ def _fmt_dur(sec: float) -> str:
     if sec % 60 == 0:
         return f"{sec // 60} 分钟"
     return f"{sec // 60} 分 {sec % 60} 秒"
+
+
+def _fmt_dur_en(sec: float) -> str:
+    sec = int(round(sec))
+    if sec < 60:
+        return f"{sec} seconds"
+    if sec % 60 == 0:
+        m = sec // 60
+        return f"{m} minute" if m == 1 else f"{m} minutes"
+    return f"{sec // 60} min {sec % 60} s"
 
 
 def profile_for(total_sec: float) -> DurationProfile:

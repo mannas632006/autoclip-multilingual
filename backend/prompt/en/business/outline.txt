@@ -1,0 +1,102 @@
+# Business & Finance Video Outline Extraction Prompt
+
+## Input format
+You will receive a JSON input:
+
+{
+  "text": "{a segment of the video transcript}"
+}
+
+- The `text` field is one segment of the video transcript;
+- The content has been checked and is broadly coherent;
+- Use only the input as your source of information. Do not add outside knowledge, common-sense inferences or logical filler.
+
+## Language
+Write every topic name and subtopic in the same language as the transcript (English for an English video). Do not translate.
+
+## Core task: business value and practicality together
+Your task is to **fully cover** every important business topic in the input text while staying **reasonably concise** and avoiding over-fragmentation. The goal is to extract **8–15 core topics**, each corresponding to **3–8 minutes** of video.
+
+## Topic extraction principles
+
+### 1. Business value first
+- **Practicality first**: prioritize the business views and analysis most valuable to investors, entrepreneurs and professionals
+- **Data driven**: focus on content with specific data, case studies and market trends
+- **No empty talk**: skip purely theoretical discussion and focus on actionable business strategies and practical experience
+
+### 2. Timeliness
+- **Hot topics**: prioritize content on current market hot spots, policy changes and industry developments
+- **Trend analysis**: focus on predictions and analysis of where business is heading
+- **Timing**: highlight time-sensitive content such as investment timing and windows of business opportunity
+
+### 3. Logical structure
+- **Cause and effect**: make sure each topic contains a complete chain of business logic (cause – process – result)
+- **Risk and return**: balance discussion of business opportunities with potential risks
+- **Multiple dimensions**: cover different levels such as the macro economy, industry analysis and company fundamentals
+
+### 4. Audience fit
+- **Layered value**: distinguish content suited to different audiences (beginner vs. advanced)
+- **Practical guidance**: prioritize content with concrete advice and tool recommendations
+- **Rich in cases**: focus on real business cases and shared experience of successes and failures
+
+## Merging and splitting strategy
+
+### Merge (these should become one topic):
+- Different angles of analysis on the same company or industry
+- Related investment strategies or business models
+- Multi-dimensional interpretation of the same economic phenomenon
+- Continuous market analysis and forecasting
+
+### Split (these should become separate topics):
+- A shift from the macro economy to analysis of a specific company
+- Independent discussions of different industries or markets
+- Investment strategy discussed separately from risk management
+- A clear separation between theoretical analysis and practical advice
+
+## Output format
+
+Output strictly in the following format, with no other descriptive text:
+
+### Outline:
+1.  **[Top-level topic name]**
+    - [Subtopic 1: highlight business value and practicality]
+    - [Subtopic 2: highlight business value and practicality]
+    - …
+
+2.  **[Top-level topic name]**
+    - [Subtopic 1]
+    - …
+
+Formatting rules (the output is parsed by a program):
+- Each topic line starts with its number, a period, and the topic name wrapped in double asterisks: `1.  **Topic name**`
+- Each subtopic is on its own line starting with `- `
+- Do not use asterisks anywhere else in a topic line, and do not use numbered lines for subtopics
+
+## Output example
+
+### Outline:
+1.  **Current market investment opportunities**
+    - Judging the timing of a valuation recovery in tech stocks
+    - Reading the policy tailwinds for the clean-energy sector
+    - Key indicators to watch for a recovery in consumer stocks
+    - How to position for capital flowing back into overseas markets
+
+2.  **Startup valuation and fundraising strategy**
+    - Valuation negotiation tactics for a pre-Series A round
+    - The financial metrics investors focus on in due diligence
+    - Practical experience balancing dilution and control
+    - Pacing fundraising across different stages of growth
+
+3.  **Industry trends and business model innovation**
+    - How the profit model of live-stream shopping has evolved
+    - Optimizing customer acquisition cost for SaaS companies
+    - Supply-chain innovation in new retail formats
+    - Compliance strategies for platform businesses under regulation
+
+## Notes
+
+1. **Business sensitivity**: make sure the extracted topics have clear business value and practicality
+2. **Data accuracy**: focus on content with specific data, percentages and dates
+3. **Risk disclosure**: balance opportunities and risks; avoid one-sided optimism or pessimism
+4. **Timeliness**: prioritize time-sensitive and urgent business information
+5. **Audience fit**: consider the understanding and needs of audiences with different business backgrounds

@@ -92,12 +92,15 @@ class SimplePipelineAdapter:
                 
                 logger.info("尝试使用Whisper本地模型生成字幕")
                 output_path = metadata_dir / f"{video_file_path.stem}.srt"
+                # 仍是 base + 自动检测语言；只有设置了 AUTOCLIP_CONTENT_LANGUAGE 时才固定语言，
+                # 避免片头音乐让自动检测判错
+                from backend.pipeline.language import transcription_language
                 srt_path = generate_subtitle_for_video(
                     video_file_path,
                     output_path=output_path,
                     method="whisper_local",
                     model="base",
-                    language="auto"
+                    language=transcription_language("auto")
                 )
                 
                 if srt_path and srt_path.exists():

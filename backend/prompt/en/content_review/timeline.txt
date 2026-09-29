@@ -1,0 +1,137 @@
+# Commentary & Review Video Timestamp Location Prompt
+
+## Core principles: complete commentary, clear logic, accurate information
+
+1.  **Complete commentary**: timestamps must correspond strictly to complete commentary units and passages.
+2.  **Logical coherence**: the time range must fully cover the commentary's line of reasoning, so the analysis is complete.
+3.  **Natural boundaries**: prefer to place time points at natural boundaries such as plot transitions, theme changes or the end of a commentary passage.
+
+## Language
+Keep the `outline` and `content` text in the same language as the transcript (English for an English video). Do not translate.
+
+---
+
+## Key instructions: how to decide `start_time` and `end_time`
+
+### Deciding `start_time`:
+-   Place it at the start time of the **first core sentence** of the commentary topic.
+-   Ignore unrelated transitions, background music, intros or outros before it.
+-   **Prefer**: start where the topic is clearly raised or the commentary begins, so the commentary is complete.
+-   **Commentary content**: if there is important background, a clip from the work or a setup, move the start earlier accordingly.
+
+### Deciding `end_time` (most important):
+-   It **must** be the **end timestamp of the last sentence** covering the core commentary of the topic.
+-   **Complete commentary**: make sure the plot commentary, analysis, evaluation and technique explanation are complete, with no gaps.
+-   **Natural ending**: prefer to end at a summarizing sentence, a verdict or a topic change.
+-   **Keep information**: if the end of the commentary includes important additional information, an easter egg or a clip from the work, include it.
+-   If the discussion of the topic continues to the end of the provided SRT chunk, `end_time` should be the end timestamp of the last relevant subtitle.
+-   **Wrong approach**: blindly setting `end_time` to the end of the whole chunk. This must be avoided at all costs.
+
+### Duration control for commentary content:
+-   **Target length**: each commentary topic segment should be between 3 and 8 minutes
+-   **Complex commentary**: in-depth analysis or complex plots can be extended to 10 minutes
+-   **Simple introductions**: basic background or simple concepts can be compressed to 2–3 minutes
+-   **Important content**: core plot commentary or key analysis can be extended to 12 minutes
+
+### Special handling for commentary content:
+-   **Complete plot**: a plot commentary with a full setup, development, turn and resolution should stay together
+-   **Analysis process**: important analysis and reasoning should be kept whole
+-   **Clips from the work**: clips that accompany the commentary should stay in sync with it
+-   **Technique explanations**: a technique demonstration and its explanation should appear together and must not be separated
+
+---
+
+## Input format
+You will receive a JSON object containing:
+-   `outline`: a JSON array of **several** commentary topics to process.
+-   `srt_text`: the **single** SRT chunk related to this batch of topics, in the format `index\nstart --> end\ntext\n\n`.
+
+## Output format
+-   Follow the structure of the input outline exactly and add `start_time` and `end_time` fields to **each** topic object.
+-   **Key:** in the output, rename the input `title` field to `outline` (keeping its text exactly), and rename the `subtopics` field to `content`.
+-   Output one JSON array containing **all** processed topics.
+-   Make sure times use the format `HH:MM:SS,mmm`.
+
+**Strict JSON output requirements:**
+1. The output must start with `[` and end with `]`; do not add any explanation, heading or Markdown code-block markers
+2. Use standard straight double quotes ", never curly quotes “” or single quotes
+3. Make sure all braces and brackets match, objects are separated by commas, and there is no comma after the last object
+4. Quotes inside strings must be escaped as \"
+5. Do not include comments, extra text or control characters
+6. Make sure the JSON is completely valid and can be parsed by a standard JSON parser
+
+## Examples of locating commentary content
+
+### Correct location:
+- **Plot commentary**: starts at "Next, let's look at this key scene..." and ends at "That's the core meaning of this part of the story"
+- **Character analysis**: starts at "Let's break down this character..." and ends at "That's the deeper meaning of the character"
+- **Technique explanation**: from the introduction of the technique to the end of the demonstration and the explanation of its effect
+- **Background**: from the start of the background to the summary of how it connects to the theme
+
+### Mistakes to avoid:
+- Cutting off at a key point of analysis in the plot commentary
+- Separating a technique explanation from its demonstration
+- Cutting in the middle of an in-depth character reading
+- Leaving out important additional information or clips from the work
+
+## Special considerations by commentary type
+
+### 1. Film and TV commentary:
+- Keep plot commentary complete and logical
+- Keep important character analysis and relationship readings
+- Include the film clips that accompany the commentary
+- Keep technique analysis professional and accurate
+
+### 2. Game commentary:
+- Keep gameplay and commentary in sync
+- Include complete walkthrough steps and skill demonstrations
+- Keep important game background and world introductions
+- Convey the gaming experience faithfully
+
+### 3. Analysis of creative works:
+- Include the complete analysis and reasoning
+- Keep theory and examples together
+- Keep the cultural and historical context complete
+- Include important judgements of value and meaning
+
+### 4. Science explainers:
+- Keep explanations systematic and logical
+- Include complete experiments and explanations of principles
+- Keep concept explanations accurate and accessible
+- Keep important applications and extensions
+
+## Timestamp strategies for different commentary content
+
+### Plot-driven commentary:
+- Locate by plot development: setup – development – climax and turn – resolution
+- Keep the plot commentary complete and continuous
+- Include important plot analysis and deeper meaning
+- Make sure viewers can follow the whole plot
+
+### Technique-driven commentary:
+- Locate by type of technique: basic – intermediate – advanced application – live demonstration
+- Keep technique explanations systematic and practical
+- Include complete demonstrations and results
+- Make sure the technique can be learned and repeated
+
+### Analysis-driven commentary:
+- Locate by level of analysis: surface phenomenon – underlying cause – impact and meaning – judgement of value
+- Keep the analysis logical and deep
+- Include important reasoning and conclusions
+- Keep the analysis objective and persuasive
+
+### Knowledge-driven commentary:
+- Locate by knowledge structure: basic concepts – core principles – examples of application – extensions
+- Keep knowledge delivery systematic and accurate
+- Include important concept explanations and principles
+- Make sure the knowledge is useful and understandable
+
+## Notes
+
+1. **Complete commentary**: make sure each segment contains a complete line of commentary and structure
+2. **Accuracy**: important facts and technical details must be included in full
+3. **Logical coherence**: keep the commentary's line of reasoning and analysis complete
+4. **Viewing experience**: consider the viewer's comprehension and pace
+5. **Value delivery**: convey both the educational and entertainment value of the commentary in full
+6. **Respect for the original**: stay respectful toward the original work when choosing timestamps
+7. **Copyright awareness**: be mindful of how long clips from the work run and of copyright

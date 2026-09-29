@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import json
 import logging
+import re
 import subprocess
 import tempfile
 import threading
@@ -158,6 +159,40 @@ def _layout_filters(layout: str, w: Optional[int], h: Optional[int]) -> List[str
     return []
 
 
+_CJK_CHARS = re.compile(r"[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff\uac00-\ud7af\uff00-\uffef]")
+
+
+def wrap_latin(text: str, width: int, max_lines: int) -> List[str]:
+    """按词折行（不切断单词），超出 max_lines 时最后一行以 … 结尾。"""
+    words = (text or "").split()
+    lines: List[str] = []
+    current = ""
+    for word in words:
+        candidate = f"{current} {word}".strip()
+        if len(candidate) <= width or not current:
+            current = candidate
+            continue
+        lines.append(current)
+        current = word
+    if current:
+        lines.append(current)
+    lines = [line if len(line) <= width else line[: width - 1].rstrip() + "…" for line in lines]
+    if len(lines) > max_lines:
+        last = lines[max_lines - 1]
+        while last and len(last) + 1 > width:
+            last = last.rsplit(" ", 1)[0] if " " in last else last[: width - 1]
+        lines = lines[: max_lines - 1] + [last.rstrip(" ,.;:-") + "…"]
+    return lines
+
+
+def title_card_text(title: str) -> str:
+    """标题卡文字。中文（含日韩）保持原样截 40 字；英文等拉丁文字按词折成最多两行，不切断单词。"""
+    title = str(title or "")
+    if _CJK_CHARS.search(title):
+        return title[:40]
+    return "\n".join(wrap_latin(" ".join(title.split()), width=36, max_lines=2))
+
+
 def _build_filter(req: ExportRequest, spec: Dict[str, Any], srt_path: Optional[Path],
                   title_path: Optional[Path], font: Optional[Path]) -> Optional[str]:
     layout = req.layout or spec["layout"]
@@ -247,7 +282,7 @@ def export_clip(req: ExportRequest) -> Dict[str, Any]:
                 warnings.append("没有可用字幕，成片不烧字")
         if req.title_card and font:
             title_file = tmpdir / "title.txt"
-            title_file.write_text(title[:40], encoding="utf-8")
+            title_file.write_text(title_card_text(title), encoding="utf-8")
 
         built = _build_filter(req, spec, srt_file, title_file if req.title_card else None, font)
         ffmpeg = get_ffmpeg_path()
